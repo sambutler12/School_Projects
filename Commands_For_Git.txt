@@ -1,0 +1,5 @@
+Puhsing New Commands:
+
+git add . 
+git commit - m "Commit Description"
+git push origin master
