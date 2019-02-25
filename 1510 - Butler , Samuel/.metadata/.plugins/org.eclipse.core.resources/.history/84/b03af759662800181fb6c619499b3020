@@ -1,0 +1,204 @@
+import java.util.*;
+
+public class FifteenSquare1
+{
+ public static void main(String[] args)
+ 	{
+	 	String [][] board = makeBoard();
+	 	displayBoard(board);
+	 	boolean test = isSolved(board);
+	 	while(test == false)
+ 		{
+	 			int blank = findBlank(board);
+	 			int row = row(blank);
+	 			int column = column(blank);
+	 			Scanner input = new Scanner(System.in);
+	 			System.out.println();
+	 			System.out.println("Input U , R , D , L: ");
+	 			String move = input.nextLine();
+	 			char move2 = move.charAt(0);
+	 			moveBlank(board, move2, row, column);
+	 		}
+ 	}
+public static String[][] makeBoard()
+ {
+	String[][] board = new String[4][4];
+	 int count = 0;
+	 	//create a for loop to be able to put the numbers from 0-15 in numerical order
+	 for(int i=0; i < 4; i++)
+	 	{
+		 	for(int j=0; j < 4; j++)
+		 	{
+		//String.valueOf makes the integer value into a string
+		 		board[i][j] = String.valueOf(i + j + count);
+		 	}
+		 	count = count + 3;
+	 	}
+	    //Swaps the 15 and the 0 and puts the 0 in the last position and the
+	    //15 in the first position 
+	 board[0][0]="15";
+	 board[3][3]="0";
+	 return board;
+ }
+public static void displayBoard(String[][] board)
+ 	{
+		char v      = '\u2551'; //Vertical double line
+		char tCross = '\u2564'; //Top double line cross
+		char bCross = '\u2567'; //bottom double line cross
+		char tLC    = '\u2554'; //top left corner
+		char h      = '\u2550'; //double horizontal line
+		char tRC    = '\u2557'; //top right corner
+		char bLC    = '\u255A'; //bottom left corner
+		char bRC    = '\u255D'; //bottom right corner
+		char tH     = '\u2500'; //thin horizontal line
+		char lTCross= '\u255F'; //left thin cross line
+		char tV     = '\u2502'; //thin vertical line
+		char rTCross= '\u2562'; //right thin cross line
+		char cS     = '\u253C'; //cross section
+		
+		System.out.print(tLC);
+		for(int i= 0; i< 16; i++)
+			{
+				if(i==4 || i ==8 || i== 12)
+					{
+						System.out.print(tCross);
+					}
+				System.out.print(h);
+				
+				if(i==15)
+					System.out.print(tRC);
+			}
+		System.out.println();
+		 for(int i=0; i < 4; i++)
+		 	{
+			 if(i>0)
+			 	{
+				 	System.out.println(lTCross+""+tH+""+tH+""+tH+""+tH+""+cS+""+tH+""+tH+""+tH+""+tH+""+cS
+				 					   +""+ tH+""+tH+""+tH+""+tH+""+cS+""+tH+""+tH+""+tH+""+tH+""+rTCross);
+			 	}
+			 for(int j=0; j < 4; j++)
+			 	{
+				 	int value = Integer.parseInt(board[i][j]);
+				 	if(value < 10 && value != 0)
+				 		{
+				 			if(j == 0)          System.out.print(v + "  " + board[i][j] + " "); 
+				 			if(j == 1 || j == 2)System.out.print(tV+ "  " + board[i][j] + " ");
+				 			if(j == 3)	        System.out.print(tV+ "  " + board[i][j] + " "+v);
+				 		}
+				 	if(value >=10)
+				 		{
+			 				if(j == 0)          System.out.print(v + " " + board[i][j] + " "); 
+			 				if(j == 1 || j == 2)System.out.print(tV+ " " + board[i][j] + " ");
+			 				if(j == 3)	        System.out.print(tV+ " " + board[i][j] + " "+v);
+				 		}
+				 	if(value == 0)
+					 System.out.print(tV+"    "+v);
+			 }
+			 System.out.println();
+		 }
+		System.out.print(bLC);
+		for(int i= 0; i< 16; i++)
+			{
+				if(i==4 || i ==8 || i== 12)
+					{
+						System.out.print(bCross);
+					}
+				System.out.print(h);
+				if(i==15)
+					System.out.print(bRC);
+			}
+ 	}
+public static int findBlank(String[][] board) 
+	{
+		for(int i=0; i < 4; i++)
+			{
+				for(int j=0; j < 4; j++)
+					{
+					 if(board[i][j] == "0")
+					 	{
+						 	if(i == 0) return j;
+						 	if(i == 1) return j + 4;
+						 	if(i == 2) return j + 8;
+						 	else       return j + 12;
+					 	}
+					}
+			}
+		return 27;
+	}
+public static int row(int i)
+	{
+	//finds the row that the blank is in by seeing if the number is greater than 3 (row 0), greater than or 
+	//equal to four but less than 7 (row 1), greater than or equal to 8 but less than 11 (row 2), and 
+	//greater than 12 (row 3)
+		if(i <= 3)           return 0;
+		if(i >= 4 && i <=7)  return 1;
+		if(i >= 8 && i <= 11)return 2;
+		if(i >= 12)          return 3;
+		
+		return 9;
+	}
+public static int column(int j)
+	{
+	//this method finds the column number that the blank spot is in by comparing j to
+	//any of the possible 15 numbers and sends back the correct column it is in.
+		if(j==0||j==4||j==8 ||j==12) return 0;
+		if(j==1||j==5||j==9 ||j==13) return 1;
+		if(j==2||j==6||j==10||j==14) return 2;
+		if(j==3||j==7||j==11||j==15) return 3;
+		
+		return 10;
+	}
+public static boolean isSolved(String[][] board)
+	{
+	int count1 = 0;
+	for(int i=0; i<4;i++)
+		{
+		for(int j=0; j<4;j++)
+			{
+			int value1 = Integer.parseInt(board[i][j]);
+			if(value1==(count1+1))
+				{
+					count1++;
+				}
+			if(value1 == 0)
+				{
+					if(board[3][3] == "0")
+					{
+						count1++;
+					}
+				}
+			}
+		}
+		if(count1 == 16) return true;
+		else             return false;
+	}
+public static void moveBlank(String[][] board, char blank, int row, int column)
+	{
+		if(blank == 'u')
+			{
+				board[row][column] = board[row-1][column];
+				board[row-1][column] ="0";
+			}
+		if(blank == 'l')
+			{
+				board[row][column] = board[row][column-1];
+				board[row][column-1] ="0";
+			}
+		if(blank == 'r')
+			{
+				board[row][column] = board[row][column+1];
+				board[row][column+1] ="0";
+			}
+		if(blank == 'd')
+			{
+			board[row][column] = board[row+1][column];
+			board[row+1][column] ="0";
+			}
+		if(blank == 'o')
+		{
+		board[row][column] = board[row-1][column-1];
+		board[row-1][column-1] ="0";
+		}
+		displayBoard(board);
+	}
+}

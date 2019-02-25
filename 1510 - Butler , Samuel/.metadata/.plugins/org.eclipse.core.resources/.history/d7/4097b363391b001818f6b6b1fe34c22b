@@ -1,0 +1,214 @@
+//This program simulates the game of Connect 4 with a red player 
+//and a yellow player
+//
+//Author: Samuel Butler
+//		  EECS 1510
+//Date:     February 11, 2018
+import java.util.Scanner;
+public class Connect4Game
+{
+	public static void main(String[] args) 
+	  {
+	    //makes a array to create the board and sends it to the 
+	    //method BoardPattern
+	    char[][] board = BoardPattern();
+	    boolean loop = true;
+	    int turn = 0;
+	    
+	    displayBoard(board);
+	    while(loop)
+	    	{
+	    //makes sure that each player takes turns dropping a disk,
+	    //we just take the turn and divide it by 2 and set the remainder
+	    //equal to zero
+	    	if(turn % 2 == 0)
+	    		{
+	    		System.out.print("Your Turn Red Player, ");
+	    		dropDisk(board , 'R');
+	    		}
+	    	else
+	    		{
+	    		System.out.print("Your Turn Yellow Player, ");
+	    		dropDisk(board , 'Y');
+	    		}
+	    	turn++;
+	    	displayBoard(board);
+	    	if (isWinner(board) != 0)
+	    		{
+	    		
+	    //Displays if the winner is red or yellow, if the board is full 
+	    //and no one got 4 in a row then displays that they tied
+	    		if(isWinner(board) == 'R')
+	    			{
+	    			 System.out.print("Red Player Win's!!!");
+	    			}
+	    		if(isWinner(board) == 'Y')
+	    			{
+	    			 System.out.print("Yellow Player Win's!!!");
+	    			}
+	    		loop = false;
+	    		}
+	    	//this condition checks to see if there is a tie, there are 
+	    	//a possible 42 moves so if turn equals 42 then there are no
+	    	//more possible moves and it's a tie
+	    	if(turn == 42)
+				{
+			 System.out.println("It's a Tie. Game over!");
+			 loop = false;
+				}
+	    	}
+	  }
+	public static char[][] BoardPattern() 
+	  {
+		 //Make a 7 by 15 array that includes both the spaces and the lines
+		 char[][] board = new char[7][15];
+			 for (int i = 0;i < board.length; i++)
+			   for (int j = 0; j <board[i].length; j++) 
+			     {
+				   
+		 //make an if statement to alternate to put a line or space
+			      if (j % 2 == 0)
+			         board[i][j] ='|';
+			      else 
+			        {
+			         board[i][j] = ' ';
+			        }
+			      
+		 //since the last line will be row 6 thats where we draw a line
+			      if (i==6) board[i][j]= '-';
+			      }
+			    return board;
+	    }
+	public static void displayBoard(char[][] board) 
+		{
+		 //loop so we can display the board of the pattern that is stored in 
+		 //the board array
+			System.out.println("|0|1|2|3|4|5|6|  ");
+			    for (int i =0;i<board.length;i++) 
+			    {
+			      for (int j=0;j<board[i].length;j++) 
+			      	{
+			    	  System.out.print(board[i][j]);
+			      	}  
+			        System.out.println();
+			    }
+		}
+	public static void dropDisk(char[][] board , char disk)
+		{
+			boolean team = true;
+			while(team)
+				{
+		//method that decides where to put the disk that the chosen player
+		//has decided to go in
+					System.out.print("Drop Disk between 0-6: ");
+					Scanner input = new Scanner(System.in);
+		
+		//makes sure that the user enters a number and not a letter/character
+					while(!input.hasNextInt()) 
+						{
+							System.out.println();
+							System.out.print("Sorry invaild input. Try again: ");
+							input.next();
+						}		
+					int column = 2 * (input.nextInt()) + 1;
+	
+		//Makes sure that the number that the user inputs is in the 
+		//range from 0-6
+					if(column > 13 || column < 0)
+						{
+							System.out.println();
+							System.out.print("Sorry Invaild Input. ");
+							team = true;
+						}	
+					else
+						{
+		//sees if the column that they choose is full, if it is it 
+		//prompts them for a new number
+						if(board[0][column] != ' ')
+							{
+								System.out.println();
+								System.out.print("Sorry column is full. Try again. ");
+								team = true;
+							}
+						else 
+							{
+								for(int i = 5; i>=0; i--)
+									if(board[i][column] == ' ')
+									{
+										board[i][column] = disk;
+										break;
+									}
+								team = false;
+							}
+						}
+				}
+		}
+	public static char isWinner(char[][] board)
+		{
+  	      //this checks if the space is taken up from either a R or Y then checks if 
+  	      //the letter in that box are the same letter as they are in the other boxes  
+		  for (int i =0; i < 6; i++) 
+			{
+				for (int j=0; j < 7; j+=2)
+		      	{ 
+		  //checks the horizontal rows of the board	  
+		    	  if ((board[i][j+1] != ' ')
+		    	  && ( board[i][j+3] != ' ')
+		    	  && ( board[i][j+5] != ' ')
+		    	  && ( board[i][j+7] != ' ')
+		    	  && ((board[i][j+1] ==  board[i][j+3])
+		    	  && ( board[i][j+3] ==  board[i][j+5])
+		    	  && ( board[i][j+5] ==  board[i][j+7])))
+		        return board[i][j+1]; 
+		      	}
+			} 
+		 for (int i=1; i < 15; i+=2) 
+		   {
+		    for (int j =0; j <= 2; j++) 
+		      	{  
+		  //checks the vertical rows of the board
+		    	  if(( board[j][i]   != ' ')
+		    	  && ( board[j+1][i] != ' ')
+		    	  && ( board[j+2][i] != ' ')
+		    	  && ( board[j+3][i] != ' ')
+		    	  && ((board[j][i]   == board[j+1][i])
+		    	  && ( board[j+1][i] == board[j+2][i])
+		    	  && ( board[j+2][i] == board[j+3][i])))
+		    	return board[j][i]; 
+		      	} 
+		    }	
+		 
+	     for (int i=0; i < 3; i++) 
+		    {
+		     for (int j=1; j < 9; j+=2) 
+		      	{
+		   //checks the diagonal rows from the left of the board
+		    	  if(( board[i][j]     != ' ')
+		    	  && ( board[i+1][j+2] != ' ')
+		    	  && ( board[i+2][j+4] != ' ')
+		    	  && ( board[i+3][j+6] != ' ')
+		    	  && ((board[i][j]     == board[i+1][j+2])
+		    	  && ( board[i+1][j+2] == board[i+2][j+4])
+		    	  && ( board[i+2][j+4] == board[i+3][j+6])))
+		        return board[i][j]; 
+		      	} 
+		    }
+		
+		 for (int i=0; i < 3; i++) 
+		    {
+		     for (int j=7;j < 15; j+=2) 
+		      	{ 
+		  //checks the diagonal rows from the right of the board
+		    	  if(( board[i][j]     != ' ')
+		    	  && ( board[i+1][j-2] != ' ')
+		    	  && ( board[i+2][j-4] != ' ')
+		    	  && ( board[i+3][j-6] != ' ')
+		    	  && ((board[i][j]     == board[i+1][j-2])
+		    	  && ( board[i+1][j-2] == board[i+2][j-4])
+		    	  && ( board[i+2][j-4] == board[i+3][j-6])))
+		        return board[i][j]; 
+		        } 
+		    }
+		    return 0;
+	}
+}

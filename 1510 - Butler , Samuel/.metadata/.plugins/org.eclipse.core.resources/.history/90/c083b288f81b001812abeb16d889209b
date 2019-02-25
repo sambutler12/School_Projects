@@ -1,0 +1,253 @@
+/*This program simulates the game of Connect 4 with a red player 
+ *and a yellow player with a 6 by 7 board and whoever gets a 4 
+ *in a row first wins the game, if the 2 users manage to get a tie 
+ *then it will display that it is a tie and end the game
+ *
+ * Author: Samuel Butler
+ * 
+ * Class:  EECS 1510
+ * 
+ * Date:   February 17, 2018
+ */
+import java.util.Scanner;
+public class Connect4Game
+{
+	public static void main(String[] args) 
+	  {
+	    //makes a array to create the board and sends it to the 
+	    //method BoardPattern by storing the correct lines and spaces
+		//in the array
+	    char[][] board = BoardPattern();
+	    boolean loop = true;
+	    int turn = 0;
+	    Scanner input = new Scanner(System.in);
+
+	    displayBoard(board);
+	    while(loop)
+	    	{
+	     //makes sure that each player takes turns dropping a disk,
+	     //we just take the turn and divide it by 2 and set the remainder
+	     //equal to zero
+	    	boolean next = true;
+	    	while(next)
+	    		{
+	     //this sends the value that the user has inputed to the drop disk array 
+	     //in order to put it into the array, it does this for both the red and
+	     //yellow player. I had to multiply the the users input by 2 and add one
+	     //because the columns are in odd spacing, so if they inputed a 2 then it
+	     //would store 5 into column but drop in the right column the user picked
+	    			if(turn % 2 == 0)
+	    				{
+	    					System.out.print("Your Turn Red Player, drop a disk between 0-6: ");
+	    					while(!input.hasNextInt()) 
+	    					{
+	    						System.out.print("Invalid Input, Try again: ");
+	    						input.next();
+	    					}
+	    					int column = 2 * (input.nextInt()) + 1;
+	    					next = dropDisk(board , 'R' , column);
+	    				}
+	    			else
+	    				{
+	    					System.out.print("Your Turn Yellow Player, drop a disk between 0-6: ");
+	    					while(!input.hasNextInt()) 
+	    					{
+	    						System.out.print("Invalid Input, Try again: ");
+	    						input.next();
+	    					}
+	    					int column = 2 * (input.nextInt()) + 1;
+	    					next = dropDisk(board , 'Y' , column);
+	    				}
+	    		}
+	    	
+	    	turn++;
+	    	displayBoard(board);
+	    	if (isWinner(board) != 0)
+	    		{
+	    		
+	     //Displays if the winner is red or yellow by getting a return value from
+	     //the isWinner method of either a R or Y.
+	    		if(isWinner(board) == 'R')
+	    			{
+	    			 System.out.print("Red Player Win's!!!");
+	    			}
+	    		if(isWinner(board) == 'Y')
+	    			{
+	    			 System.out.print("Yellow Player Win's!!!");
+	    			}
+	    		else 
+	    			{
+	    	//this condition checks to see if there is a tie, there are 
+	        //a possible 42 moves so if turn equals 42 then there are no
+	    	//more possible moves and it's a tie
+	    				if(turn == 42)
+	    				{
+	    					System.out.println("It's a Tie. Game over!");
+	    					loop = false;
+	    				}
+	    			}
+	    		}
+	    	}
+	    input.close();
+	  }
+	public static char[][] BoardPattern() 
+	  {
+		 //Make a 7 by 15 array that includes both the spaces and the lines
+		 //where i is the row that it will be going in and j is the column
+		 char[][] board = new char[7][15];
+			 for (int i = 0;i < board.length; i++)
+			   for (int j = 0; j <board[i].length; j++) 
+			     {
+				   
+		 //make an if statement to alternate to put a line or space
+		 //and will store it in the array board
+			      if (j % 2 == 0)
+			         board[i][j] ='|';
+			      else 
+			        {
+			         board[i][j] = ' ';
+			        }
+			      
+		 //since the last line will be row 6 thats where we draw a line
+			      if (i==6) board[i][j]= '-';
+			      }
+			    return board;
+	    }
+	public static void displayBoard(char[][] board) 
+		{
+		 //loop so we can display the board of the pattern that is stored in 
+		 //the board array
+			System.out.println("|0|1|2|3|4|5|6|  ");
+			    for (int i =0;i<board.length;i++) 
+			    {
+			      for (int j=0;j<board[i].length;j++) 
+			      	{
+			    	  System.out.print(board[i][j]);
+			      	}  
+			        System.out.println();
+			    }
+		}
+	public static boolean dropDisk(char[][] board , char disk , int drop)
+		{
+		 //Makes sure that the number that the user inputs is in the 
+		 //range from 0-6, if it isn't then it will return true and it will
+		 //do the loop all over again
+			if(drop > 13 || drop < 0)
+				{
+					System.out.println();
+					System.out.println("Sorry Invaild Input. Try again. ");
+					return true;
+				}	
+			else
+				{
+		 //sees if the column that they choose is full, if it is it then it will
+		 //return true to the main method and prompt the user for a new number
+					if(board[0][drop] != ' ')
+						{
+							System.out.println();
+							System.out.println("Sorry column is full. Try again. ");
+							return true;
+						}
+					else
+						{
+		  //This takes the value that the user has picked and puts it in the specific column
+		  //and also checks to see if there is a letter already in that space, if there is
+		  //then it will make sure to put it in the space above it instead of replacing the letter 
+							for(int i = 5; i>=0; i--)
+							if(board[i][drop] == ' ')
+								{
+									board[i][drop] = disk;
+									break;
+								}
+						}
+				}
+					return false;
+		}
+	public static char isWinner(char[][] board)
+		{
+  	     //this checks if the space is taken up from either a R or Y then checks if 
+  	     //the letter in that box are the same letter as they are in the other boxes
+		 //then it will return that letter that one back to main and declare the winner
+		
+		 //the first checker is starting at the top of the board at row 0
+		 //and at column 0 which is the top left spot of the board and works 
+		 //towards the right to see if there are any 4 in a row matches
+		  for (int i =0; i < 6; i++) 
+			{
+				for (int j=0; j < 7; j+=2)
+		      	{ 
+		  //checks the horizontal rows of the board, which checks all
+		  // 24 ways of winning 
+		    	  if ((board[i][j+1] != ' ')
+		    	  && ( board[i][j+3] != ' ')
+		    	  && ( board[i][j+5] != ' ')
+		    	  && ( board[i][j+7] != ' ')
+		    	  && ((board[i][j+1] ==  board[i][j+3])
+		    	  && ( board[i][j+3] ==  board[i][j+5])
+		    	  && ( board[i][j+5] ==  board[i][j+7])))
+		        return board[i][j+1]; 
+		      	}
+			} 
+		  //this is the same concept as the horizontal checker but it starts
+		  //at i equals 1 and works it way up to see if there are any 4 in
+		  // a rows in the specific column, if there isn't then it will go
+		  //to the next column and check that one until the for loop is false
+		 for (int i=1; i < 15; i+=2) 
+		   {
+		    for (int j =0; j <= 2; j++) 
+		      	{  
+		  //checks the vertical rows of the board, which checks all
+		  // 21 ways of winning
+		    	  if(( board[j][i]   != ' ')
+		    	  && ( board[j+1][i] != ' ')
+		    	  && ( board[j+2][i] != ' ')
+		    	  && ( board[j+3][i] != ' ')
+		    	  && ((board[j][i]   == board[j+1][i])
+		    	  && ( board[j+1][i] == board[j+2][i])
+		    	  && ( board[j+2][i] == board[j+3][i])))
+		    	return board[j][i]; 
+		      	} 
+		    }	
+		  //diagonal from the left is checking at the top left tone first
+		  //and working its way down to see if there is a 4 in a row,
+		  //this time we had to increment both i and j at the same time
+		  //in order to go down in a diagonal fashion
+	     for (int i=0; i < 3; i++) 
+		    {
+		     for (int j=1; j < 9; j+=2) 
+		      	{
+		  //checks the diagonal rows from the left of the board, which checks all
+		  // 12 ways of winning
+		    	  if(( board[i][j]     != ' ')
+		    	  && ( board[i+1][j+2] != ' ')
+		    	  && ( board[i+2][j+4] != ' ')
+		    	  && ( board[i+3][j+6] != ' ')
+		    	  && ((board[i][j]     == board[i+1][j+2])
+		    	  && ( board[i+1][j+2] == board[i+2][j+4])
+		    	  && ( board[i+2][j+4] == board[i+3][j+6])))
+		        return board[i][j]; 
+		      	} 
+		    }
+		 //the diagonal from the right is working from the right most spot
+	     //in the right down to the left and checking if there are any 4 in
+	     //a row wins, if not it will go through all the possible diagonals 
+	     //until the for loop is false
+		 for (int i=0; i < 3; i++) 
+		    {
+		     for (int j=7;j < 15; j+=2) 
+		      	{ 
+		 //checks the diagonal rows from the right of the board, which checks all
+		 // 12 ways of winning
+		    	  if(( board[i][j]     != ' ')
+		    	  && ( board[i+1][j-2] != ' ')
+		    	  && ( board[i+2][j-4] != ' ')
+		    	  && ( board[i+3][j-6] != ' ')
+		    	  && ((board[i][j]     == board[i+1][j-2])
+		    	  && ( board[i+1][j-2] == board[i+2][j-4])
+		    	  && ( board[i+2][j-4] == board[i+3][j-6])))
+		        return board[i][j]; 
+		        } 
+		    }
+		    return 0;
+	}
+}

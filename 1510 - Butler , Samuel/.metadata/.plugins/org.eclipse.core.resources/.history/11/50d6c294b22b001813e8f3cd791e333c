@@ -1,0 +1,16 @@
+import java.io.FileNotFoundException;
+import java.util.*;
+public class test5
+{
+	public static void main(String[] main)
+	{
+		java.io.File name = new java.io.File("Names.txt");
+		try
+		{
+			Scanner input = new Scanner(name);
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+	}
+}

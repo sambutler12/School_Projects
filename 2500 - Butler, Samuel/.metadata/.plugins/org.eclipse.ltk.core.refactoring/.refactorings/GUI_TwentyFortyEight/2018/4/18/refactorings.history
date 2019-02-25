@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename field &apos;r&apos; in &apos;TwentyFortyEight_GUI&apos; to &apos;miniRec&apos;&#x0D;&#x0A;- Original project: &apos;GUI_TwentyFortyEight&apos;&#x0D;&#x0A;- Original element: &apos;TwentyFortyEight_GUI.r&apos;&#x0D;&#x0A;- Renamed element: &apos;TwentyFortyEight_GUI.miniRec&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;r&apos;" flags="589830" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;{TwentyFortyEight_GUI.java[TwentyFortyEight_GUI^r" name="miniRec" references="true" setter="false" stamp="1525030190729" textual="false" version="1.0"/>
+</session>

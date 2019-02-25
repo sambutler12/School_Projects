@@ -1,0 +1,30 @@
+import java.util.*;
+public class test5
+{
+	public static void main(String[] args)
+	{
+		Scanner input = new Scanner(System.in);
+		System.out.print("Input a number to find the cube of it: ");
+		int x = input.nextInt();
+		chicken sam = new chicken();
+		sam.number = x;
+		System.out.println("This is "+ sam.number +" to the 3rd power "+ sam.getChicken());
+
+	}
+}
+class chicken 
+{
+	int number;
+	chicken()
+	{
+		number = 1;
+	}
+	chicken(int number1)
+	{
+		number = number1;
+	}
+	int getChicken()
+	{
+		return number * number * number;
+	}
+}

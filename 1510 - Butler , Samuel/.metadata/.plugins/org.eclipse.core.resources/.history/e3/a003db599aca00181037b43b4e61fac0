@@ -1,0 +1,26 @@
+import java.util.Scanner;
+
+public class test
+{
+	static int sum = 1;
+	static int value = 0;
+	public static void main(String[] args)
+	{
+		System.out.print("Enter a value that you want to take the factorial of: ");
+		Scanner input = new Scanner(System.in);
+		value = input.nextInt();
+		sum = value;
+		Factorial();
+		System.out.println("The anwser is: "+sum);
+		
+	}
+	
+	public static void Factorial() 
+	{
+		while(value != 0)
+		{
+			sum = sum*(value-1);
+			Factorial();
+		}
+	}
+}

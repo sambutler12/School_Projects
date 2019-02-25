@@ -1,0 +1,21 @@
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+public class test5
+{
+	public static void main(String[] main) throws IOException
+	{
+		File name = new File("Name2.txt");
+		if(name.exists())
+		{
+			System.out.println("File already exists");
+			System.exit(1);
+		}
+		PrintWriter output = new PrintWriter(name);
+		output.print("Samuel David Butler ");
+		output.print(19);
+		
+		output.close();
+		
+	}
+}

@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+org.eclipse.debug.ui.VariableView.org.eclipse.jdt.debug.ui.show_null_entries=true
+org.eclipse.jdt.debug.ui.active_filters=com.ibm.*,com.sun.*,java.*,java.lang.*,javax.*,jdk.internal.jimage.*,jdk.internal.loader.*,jdk.internal.misc.*,jdk.internal.module.*,jdk.internal.org.objectweb.asm.*,jdk.internal.ref.*,jdk.internal.reflect.*,jdk.internal.util.*,jrockit.*,org.eclipse.jdt.launching.internal.javaagent.*,org.eclipse.jdt.launching.internal.org.objectweb.asm.*,org.eclipse.jdt.launching.internal.weaving.*,org.omg.*,sun.*,sunw.*,java.lang.ClassLoader
+org.eclipse.jdt.debug.ui.inactive_filters=
+org.eclipse.jdt.debug.ui.javaDebug.alertHCRFailed=false
+org.eclipse.jdt.debug.uijavaDebug.alertObsoleteMethods=false

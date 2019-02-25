@@ -1,0 +1,153 @@
+import support.*;
+
+public class InfixToPostfix
+{
+	 protected  String infixExp;	//expression that is passed an infix 
+	 protected  String postfixExp;	//expression that holds postfix 
+	 protected  linkedStack<String> stack = new linkedStack<String>();	// Creates a stack of type string unbounded
+	 
+	 public InfixToPostfix(String expression)
+	 {
+		 //sam test 2
+		 //sam test 3
+		 // sam test 4
+		 // sam test 5
+		 //sam test 6
+		 //sam test 7
+		 infixExp = expression;	
+		 postfixExp = "";	// Instantiates postfix expression to an empty string
+	 }// end constructor InfixToPostfix
+	 
+	 public String convert(String prev) throws StackUnderFlowException,StringIndexOutOfBoundsException
+	 {
+		 int tokenIndex = 0;						// Index to know where we are in the string and what character we are at
+		 int lastTokenIndex = infixExp.length() - 1;// Last index in the string
+		 String token = "";							// default string to add to incase the input a double digit or greater number
+		 
+		 while(tokenIndex <= lastTokenIndex)
+		 {
+			 token += infixExp.charAt(tokenIndex);	//	puts the char in the string into token at whatever index is specified
+			 
+			 if(token.equals(" "))
+			 {					// Checks to see if the char being studied is a space, if it is then 
+				tokenIndex++;	// it will increment tokenIndex so it can move to the next char and
+				token = "";		// reset token to an empty string	
+			 	continue;		// then skip that char
+			 }
+			 
+			 if(infixExp.charAt(tokenIndex) == 'a' && infixExp.charAt(tokenIndex+1) == 'n' && infixExp.charAt(tokenIndex+2) == 's')
+			 {
+				 token = prev;
+				 postfixExp += token+ " ";
+				 token = "";
+				 tokenIndex += 3;
+				 continue;
+			 }
+			 
+			 if(Character.isDigit(infixExp.charAt(tokenIndex))) // then it will check if the char being studied is a number
+			 {
+				 while(tokenIndex != lastTokenIndex && Character.isDigit(infixExp.charAt(tokenIndex+1)))
+				 {	// As long as the chars index is not equal to last index and if the character next to it is a number
+					// this if statement will execute.
+					 
+					 token += infixExp.charAt(tokenIndex+1);	// We know that it is a digit bigger than 9 so we add it to the token as well
+					 tokenIndex++;
+				 }
+				 postfixExp += token + " "; // adds the digit to the postfix expression
+				 tokenIndex++;				// increments to the next character to be studied
+				 token = "";				// reset token string to an empty string
+				 continue; 					// break out of loop
+			 }
+
+			 else if(token.equals("(")) 	// checks to see if it is a left parenthesis, if it is then it will
+				 stack.push(token);			// it will push it on the stack
+			 
+			 else if(token.equals(")")) 	// checks to see if it is a right parenthesis, if it is
+				 proccessRightParen();		// then it will go to the processRightParen method
+			 else
+				 proccessOperator(token);	//if it gets down here then we know that it is an operator
+			 
+			 token = ""; 	
+			 tokenIndex++;	
+		 }
+		 
+		 while(!stack.isEmpty())	// will check if the stack is empty, if it is not then we will
+		 {
+			 token = stack.top();
+			 stack.pop();
+			 postfixExp += token + " ";
+		 }
+		
+		 return postfixExp; // Returns the final postfix expression
+	 }// end convert class
+	 
+	private  void proccessRightParen() throws StackUnderFlowException
+	{	// it will come into this class if the token being studied is a right paren
+		
+		String topToken = null;
+		if(stack.isEmpty())
+			throw new StackUnderFlowException("Top attempted on empty stack.");
+		topToken = stack.top();
+
+		
+		while(!topToken.equals("(")) // as long as the we don't get to a left paren this loop will run
+		{
+			postfixExp += topToken + " ";
+			
+			if(stack.isEmpty())
+				throw new StackUnderFlowException("Top attempted on empty stack.");
+			stack.pop();
+		
+				
+			if(stack.isEmpty())
+				 throw new StackUnderFlowException("Top attempted on empty stack.");
+			topToken = stack.top(); // after we have put the topToken to our postfix expression
+									// then we can pop it and receive a new topToken
+		}
+		
+		if(stack.isEmpty())
+			throw new StackUnderFlowException("Top attempted on empty stack.");
+		stack.pop();
+	}// end processRightParen class
+	
+	private  void proccessOperator(String currToken)
+	{
+		String topToken = null;
+		try
+		{
+			topToken = stack.top();
+		} 
+		catch (StackUnderFlowException e)
+		{
+			// StackUnderFlowException will occur when stack is empty 
+		}
+		// CC
+		while(!stack.isEmpty() && !topToken.equals("(") && (Precedence.Prec(currToken) <= Precedence.Prec(topToken)))
+		{
+			// will enter this loop as long as the statement inside is true. Precedence is only checked with the Q and
+			// C operators. If the current token being studied has less than precedence of the one on the top of
+			// the stack then we are okay, if the current character say is a Q and the topToken is a + then the loop 
+			// will be false and push the higher order precedence onto the stack.
+			
+			try
+			{
+				stack.pop();
+			} catch (StackUnderFlowException e)
+			{
+				// StackUnderFlowException will occur when stack is empty
+			}
+			
+			postfixExp += topToken + " "; // adds the topToken from the stack to the postfix expression
+			
+			try
+			{
+				topToken = stack.top();
+			} 
+			catch (StackUnderFlowException e)
+			{
+				// StackUnderFlowException will occur when stack is empty
+			}
+		}
+		stack.push(currToken);
+	}// end processsOperator class
+}// end InfixToPostFix class

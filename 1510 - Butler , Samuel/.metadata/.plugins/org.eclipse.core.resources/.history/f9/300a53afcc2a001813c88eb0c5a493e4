@@ -1,0 +1,412 @@
+//This program is a puzzle game of Fifteen square and the object of the game is to get the 
+//numbers all in chronological order to win, the program first randomly shuffles the board
+//so it is unique each time and no similar to the last. You are asked once you win the game if
+//you would want to play again, the game keeps track of the total games that you have played , 
+//the total wins that you have, and also the total moves after each game. You can SAVE the game you are 
+//currently playing and come back and LOAD the game later, can also QUIT the game and get HELP as needed
+//throughout the game.
+//
+//Author: Samuel Butler
+//		  EECS 1510
+//Date:   March 16, 2018
+import java.util.*;
+
+public class FifteenSquare1
+{
+	//keeps track of how many games the user has played and as well as how many games they have won
+	
+	static int totalGames = 0;
+	static int gamesWon   = 0;
+	static char lastMove = ' ';
+public static void main(String[] args)
+{
+	 int movesMade  = 0;
+	 
+	 //making a while loop around the entire main so i can set a true or false to see if the
+	 //user wants to play again
+	 
+	 boolean gamesPlayed = true;
+	 while(gamesPlayed == true)
+	 {
+		 System.out.println("You can use Q(to quit the current game), H(for info about the game), "+
+				 		  "S(to save the game), G(to load a game), and Z(to undo last move).");
+		 
+	 	String [][] board = makeBoard();
+	 	board = shuffle(board);
+	 	displayBoard(board);
+	 	
+	 	//while loop with the variable direction to make sure that it keeps prompting the user for more and more moves
+	 	//until the user has either got the winning set or they quit
+	 	
+	 	boolean direction = true;
+	 	while(direction == true)
+ 		{
+	 		String playersMove;
+	 		int blank = findBlank(board);
+	 		int row = row(blank);
+	 		int column = column(blank);
+	 			
+	 			//ask the user to input one of the four possible directions they can move
+	 			
+	 		Scanner input = new Scanner(System.in);
+	 		System.out.println();
+			System.out.print("Input U(up) , R(right) , D(down), or L(left) to move the blank space: ");
+			playersMove = input.nextLine();
+			System.out.println();
+				
+				//makes sure that if the user just hit enter that it won't crash and will prompt
+				//them again to enter a direction to move
+				
+			while(playersMove.equals(""))
+			{
+				System.out.print("PLease enter a direction you would like to go. ");
+				playersMove = input.nextLine();
+			}
+				//takes the first letter that is entered which is char(0) and puts that in move2 
+				//in order to send the letter to the moveBlank method
+				
+			char move2 = playersMove.charAt(0);
+			if(move2 == 'z' || move2 == 'Z')
+			{
+				if(lastMove == 'u' || lastMove == 'U') move2 = 'd';
+				if(lastMove == 'd' || lastMove == 'D') move2 = 'u';
+				if(lastMove == 'l' || lastMove == 'L') move2 = 'r';
+				if(lastMove == 'r' || lastMove == 'R') move2 = 'l';
+			}
+				//if the user wants to quit the current game they are playing and start a new one
+			if(move2 == 'q' || move2 == 'Q')
+			{
+				totalGames++;
+				movesMade = 0;
+				direction = false;
+				System.out.println();
+				break;
+			}
+			//the variable invalid is to make sure that that they can't move a certain direction
+			//if they are up against a wall
+	 		boolean invalid =moveBlank(board, move2, row, column);
+	 		
+	 		if(invalid == false)
+	 		{
+	 			System.out.println("Can not move that direction.Try again. ");
+	 			direction = true;
+	 		}
+	 		
+	 		displayBoard(board);
+	 			
+	 			//increases the moves made each time it goes through the loop to keep track 
+	 			//of how many times the have moved
+		
+	 		movesMade++;
+	 		
+	 		 if(isSolved(board)==true)
+	 		 {
+	 		 	System.out.println();
+	 		 	System.out.println("Congratulations!! You win!!");
+	 		 		
+	 		 	totalGames++;
+	 		 	gamesWon++;
+	 		 			
+	 		 	//displays the total games played, games they have won, and how many moves it took
+	 		 	//them to win the game
+	 		 			
+	 		 	System.out.println("Total games won: "+gamesWon);
+	 		 	System.out.println("Total games played: "+totalGames);
+	 		 	System.out.println("Total moves made that game: "+movesMade);
+	 		 			
+	 		 	//prompts the user if they want to play again and if they say yes it will
+	 		 	//set the while loop to true and create a new randomized board
+	 		 			
+	 		 	System.out.print("Do you want to play again? Enter yes or no: ");
+	 		 	Scanner input2 = new Scanner(System.in);
+	 		 	String playAgain = input.nextLine();
+	 		 			
+	 		 	if(playAgain.equals("yes"))
+	 		 	{
+	 		 		gamesPlayed = true;
+	 		 	}
+	 		 	else
+	 		 	{
+	 		 		gamesPlayed = false;
+	 		 	}
+	 		 	direction = false;
+	 		 }
+ 		}
+	 }
+ }//end main
+ 
+public static String[][] makeBoard()
+{
+	String[][] board = new String[4][4];
+	 int count = 0;
+	 	//create a for loop to be able to put the numbers from 0-15 in numerical order
+	 
+	 for(int i=0; i < 4; i++)
+	 {
+		for(int j=0; j < 4; j++)
+		 {
+			
+		//String.valueOf makes the integer value into a string
+		 		
+		 	board[i][j] = String.valueOf(i + j + count);
+		 }
+		 	count = count + 3;
+	 }
+	    //Swaps the 15 and the 0 and puts the 0 in the last position which is[3][3]
+	 	//and the 15 in the first position at [0][0]
+	 
+	 board[0][0]="15";
+	 board[3][3]="0";
+	 
+	 return board;
+ }//end makeBoard
+
+public static void displayBoard(String[][] board)
+ {
+		char DV      = '\u2551'; //Vertical double line
+		char tDCross = '\u2564'; //Top double line cross
+		char bDCross = '\u2567'; //bottom double line cross
+		char tLC    = '\u2554'; //top left corner
+		char DH      = '\u2550'; //double horizontal line
+		char tRC    = '\u2557'; //top right corner
+		char bLC    = '\u255A'; //bottom left corner
+		char bRC    = '\u255D'; //bottom right corner
+		char SH     = '\u2500'; //single horizontal line
+		char lSCross= '\u255F'; //left single cross line
+		char SV     = '\u2502'; //single vertical line
+		char rSCross= '\u2562'; //right single cross line
+		char cS     = '\u253C'; //cross section
+		
+		//This makes the top line of the board
+		
+		String dH4=(DH+""+DH+""+DH+""+""+DH);
+		String TopLine= (tLC+""+dH4+""+tDCross+""+dH4+""+tDCross+""+dH4+""+tDCross+""+dH4+""+tRC);
+		System.out.println(TopLine);
+		
+		String HLine4 = (SH+""+SH+""+SH+""+SH);
+		 for(int i=0; i < 4; i++)
+		 {
+			 //creates all the horizontal lines within the board between each of the numbers
+			 
+			 if(i>0)
+				 System.out.println(lSCross+""+HLine4+""+cS+""+HLine4+""+cS+""+HLine4+""+cS+""+HLine4+""+rSCross);
+			 
+			 for(int j=0; j < 4; j++)
+			 {
+				 
+			 //Integer.parseInt makes the string into an int so we can work with it easier, the for
+			 //loop makes the vertical lines within the board taking into account if it is a 
+			 //double digit number, single digit number, and also if it is the 0 (blank spot)
+				 
+				 int value = Integer.parseInt(board[i][j]);
+				 if(value < 10 && value != 0)
+				 {
+				 	if(j == 0)          System.out.print(DV + "  " + board[i][j] + " "); 
+				 	if(j == 1 || j == 2)System.out.print(SV+ "  " + board[i][j] + " ");
+				 	if(j == 3)	        System.out.print(SV+ "  " + board[i][j] + " "+DV);
+				 }
+				 if(value >=10 && value != 0)
+				 {
+			 		if(j == 0)          System.out.print(DV + " " + board[i][j] + " "); 
+			 		if(j == 1 || j == 2)System.out.print(SV+ " " + board[i][j] + " ");
+			 		if(j == 3)	        System.out.print(SV+" " + board[i][j] + " "+DV);
+				 }
+				 if(value == 0)
+				 {
+				 	if(j==1||j==2)      System.out.print(SV+"    ");
+				 	if(j==0)            System.out.print(DV+"    ");
+				 	if(j==3)            System.out.print(SV+"    "+DV);
+				 }
+			 }
+			 System.out.println();
+		 }
+		 
+		 //this will create the bottom portion of the board 
+		 String BottomLine= (bLC+""+dH4+""+bDCross+""+dH4+""+bDCross+""+dH4+""+bDCross+""+dH4+""+bRC);
+		 System.out.print(BottomLine);
+		 
+ }//end displayBoard
+
+public static int findBlank(String[][] board) 
+{
+	//this will find the blank of the board by going through each spot in the array and 
+	//checking if the zero is there or not and will return an integer value at the position
+	//that the zero value is in. I calculated the integer value by going based by rows:
+	/*                        0   1   2    3
+	 *                      _________________    
+	 * 			    row 0   |   |   |   |   |    if the row was equal to 0 then the position would be the column number
+	 *				row 1   | +4|+4 |+4 |+4 |    
+	 *				row 2	| +8|+8 |+8 |+8 |	 if the row was equal to one I would add 4 to whatever j was knowing that each row down	  
+	 *				row 3	|+12|+12|+12|+12|    goes up by 4 uniformly, knowing this if the row is 2 then we will add 8, and if the row is
+	 *										     3 then we will add 12 to get the location of where the blank is
+	 */
+		for(int i=0; i < 4; i++)
+		{
+			for(int j=0; j < 4; j++)
+			{
+				if(board[i][j] == "0")
+				{
+					if(i == 0) return j;
+					if(i == 1) return j + 4;
+					if(i == 2) return j + 8;
+					else       return j + 12;
+				}
+			}
+		}
+		return 0;
+	}//end findBlank
+
+public static int row(int i)
+{
+	//finds the row that the blank is in by seeing if the number is greater than 3 (row 0), greater than or 
+	//equal to four but less than 7 (row 1), greater than or equal to 8 but less than 11 (row 2), and 
+	//greater than 12 (row 3)
+	
+		if(i <= 3)           return 0;
+		if(i >= 4 && i <=7)  return 1;
+		if(i >= 8 && i <= 11)return 2;
+		if(i >= 12)          return 3;
+		
+		return 9;
+}//end row
+
+public static int column(int j)
+{
+	//this method finds the column number that the blank spot is in by comparing j to
+	//any of the possible 15 numbers and sends back the correct column it is in.
+	
+		if(j==0||j==4||j==8 ||j==12) return 0;
+		if(j==1||j==5||j==9 ||j==13) return 1;
+		if(j==2||j==6||j==10||j==14) return 2;
+		if(j==3||j==7||j==11||j==15) return 3;
+		
+		return 10;
+}//end column
+
+public static boolean isSolved(String[][] board)
+{
+	
+	//checks if the user got the winning combination, we have a count which starts at zero and goes through the 
+	//whole board checking if the position that they placed the number is equal to the count + 1. if it is then it
+	//will increment the count each time it goes through until finally if the count is equal to 16 then the 
+	//user got the winning combination
+	
+	int count1 = 0;
+	for(int i = 0 ; i<4 ; i++)
+	{
+		for(int j = 0 ; j<4 ; j++)
+		{
+			int value1 = Integer.parseInt(board[i][j]);
+			if(value1 == (count1+1))
+			{
+					count1++;
+			}
+			if(value1 == 0)
+			{
+				if(board[3][3] == "0")
+				{
+					count1++;
+				}
+			}
+		}
+	}
+	if(count1 == 16) return true;
+	else             return false;
+		
+}//end isSolved
+
+public static boolean moveBlank(String[][] board, char blank, int row, int column)
+	{
+	
+	//see's the letter that the user has inputed is equal to one of these cases and if it is will 
+	//swap it with the number that is to its right or left or above or below it, also checks if it
+	//is able to move in the direction that the user has chosen by seeing it is up against a wall 
+	//and they move towards the wall, then moveBlank will return false and prompt them again
+	
+		if(blank == 'u'|| blank == 'U')
+			{
+				if(row == 0)
+					{
+						return false;
+					}
+				else
+					{
+						board[row][column] = board[row-1][column];
+						board[row-1][column] ="0";
+						lastMove = blank;
+					}
+			}
+		if(blank == 'l'|| blank == 'L')
+			{
+				if(column == 0)
+					{
+					return false;
+					}
+				else
+					{
+						board[row][column] = board[row][column-1];
+						board[row][column-1] ="0";
+						lastMove = blank;
+					}
+			}
+		if(blank == 'r'|| blank == 'R')
+			{
+				if(column == 3)
+					{
+					return false;
+					}
+				else
+					{
+						board[row][column] = board[row][column+1];
+						board[row][column+1] ="0";
+						lastMove = blank;
+					}
+			}
+		if(blank == 'd'|| blank == 'D')
+			{
+				if(row == 3)
+				{
+					return false;
+				}
+			else
+				{
+					board[row][column] = board[row+1][column];
+					board[row+1][column] ="0";
+					lastMove = blank;
+				}
+			}
+		return true;
+	}//end moveBlank
+
+public static String[][] shuffle(String[][] board)
+	{
+		//this shuffle method becomes the user basically and moves the blank space all around the board 
+	    //in order to shuffle it up and make it as random as possible for the user, it will do 10,000
+	    //moves to make it random before it lets the user play
+	
+		for(int i = 0; i<=10000;i++)
+			{
+			int blank  = findBlank(board);
+			int row    = row(blank);
+			int column = column(blank);
+			
+			//will generate either a 0 , 1 , 2 , or 3 and put that number into the switch 
+			//statement and pick that specific case and send the arguments to the make board method
+			
+			Random shuffle = new Random();
+			int value = shuffle.nextInt(4);
+				switch(value)
+					{
+						case 0: moveBlank(board , 'u', row , column);
+						break;
+						case 1: moveBlank(board , 'd', row , column);
+						break;
+						case 2: moveBlank(board , 'l', row , column);
+						break;
+						case 3: moveBlank(board , 'r', row , column);
+					}
+			}
+		return board;
+	}//end shuffle
+
+}//end class

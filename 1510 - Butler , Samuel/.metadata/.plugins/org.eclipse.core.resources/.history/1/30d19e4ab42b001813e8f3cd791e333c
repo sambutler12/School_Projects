@@ -1,0 +1,15 @@
+import java.io.IOException;
+
+public class test5
+{
+	public static void main(String[] main) throws IOException
+	{
+		java.io.File name = new java.io.File("Name.txt");
+		if(name.exists())
+		{
+			System.out.println("File already exists");
+			System.exit(1);
+		}
+		java.io.PrintWriter output = new java.io.PrintWriter(name);
+	}
+}
