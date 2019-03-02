@@ -1,0 +1,23 @@
+Puhsing New Commands:
+
+git add . 
+git commit - m "Commit Description"
+git push origin master
+
+Creat a Branch:
+
+git pull
+git checkout -b [Name of your Branch]
+
+See All Branches:
+
+git branch -a
+
+Delete a Branch:
+
+git branch -D [Name of your Branch]
+git push origin :[Name of your Branch]
+
+Update Branch:
+
+git fetch [Name of your Branch]
